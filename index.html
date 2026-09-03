@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>A Memory, Always With Us ❤️</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background: #f7f0e5;
+        color: #332b25;
+        font-family: Georgia, "Times New Roman", serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 35px 20px;
+    }
+
+    .page {
+        width: min(1250px, 100%);
+    }
+
+    .memory-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(350px, 0.95fr);
+        gap: 45px;
+        align-items: center;
+    }
+
+    /* =========================
+       IMAGE / DRAWING SECTION
+       ========================= */
+
+    .drawing-panel {
+        position: relative;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .canvas-wrap {
+        position: relative;
+        width: min(100%, 650px);
+        aspect-ratio: 1 / 1;
+        overflow: hidden;
+        background: #fffdf8;
+
+        box-shadow:
+            0 10px 35px rgba(60, 45, 30, 0.13),
+            0 2px 8px rgba(60, 45, 30, 0.08);
+    }
+
+    canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    .canvas-wrap::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+
+        background:
+            repeating-linear-gradient(
+                0deg,
+                rgba(80, 60, 40, 0.018) 0px,
+                rgba(80, 60, 40, 0.018) 1px,
+                transparent 1px,
+                transparent 4px
+            );
+
+        mix-blend-mode: multiply;
+    }
+
+    /* =========================
+       MESSAGE SECTION
+       ========================= */
+
+    .message-panel {
+        padding: 35px 35px 40px;
+
+        background: rgba(255, 252, 246, 0.72);
+
+        border: 1px solid rgba(130, 105, 80, 0.14);
+
+        box-shadow:
+            0 12px 35px rgba(60, 45, 30, 0.06);
+
+        min-height: 420px;
+
+        display: flex;
+        align-items: center;
+    }
+
+    .message {
+        width: 100%;
+    }
+
+    .message p {
+        margin: 0;
+
+        font-size: clamp(17px, 1.55vw, 22px);
+
+        line-height: 1.8;
+
+        font-style: italic;
+
+        color: #4b4038;
+    }
+
+    .shayari-line {
+        display: block;
+        min-height: 1.8em;
+    }
+
+    .shayari-word {
+        opacity: 0;
+
+        display: inline-block;
+
+        margin-right: 0.25em;
+
+        transform: translateY(5px);
+
+        animation:
+            wordAppear 0.35s ease forwards;
+    }
+
+    @keyframes wordAppear {
+
+        from {
+            opacity: 0;
+            transform: translateY(5px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* =========================
+       CURSOR
+       ========================= */
+
+    .cursor {
+        display: inline-block;
+
+        width: 2px;
+        height: 1.1em;
+
+        background: #8b7562;
+
+        margin-left: 3px;
+
+        vertical-align: -0.15em;
+
+        animation:
+            blink 0.8s infinite;
+    }
+
+    @keyframes blink {
+
+        0%, 45% {
+            opacity: 1;
+        }
+
+        46%, 100% {
+            opacity: 0;
+        }
+    }
+
+    /* =========================
+       REPLAY BUTTON
+       ========================= */
+
+    .controls {
+        margin-top: 22px;
+        text-align: center;
+    }
+
+    button {
+        border: 1px solid rgba(90, 70, 50, 0.25);
+
+        background: rgba(255, 252, 246, 0.9);
+
+        color: #57483d;
+
+        padding: 10px 20px;
+
+        border-radius: 30px;
+
+        font-family: Georgia, serif;
+
+        font-size: 14px;
+
+        cursor: pointer;
+
+        transition: all 0.25s ease;
+    }
+
+    button:hover {
+        background: #fff;
+
+        transform: translateY(-1px);
+
+        box-shadow:
+            0 5px 15px rgba(60, 45, 30, 0.1);
+    }
+
+    /* =========================
+       MOBILE
+       ========================= */
+
+    @media (max-width: 850px) {
+
+        body {
+            padding: 20px 14px 30px;
+        }
+
+        .memory-layout {
+            grid-template-columns: 1fr;
+            gap: 28px;
+        }
+
+        .canvas-wrap {
+            width: min(100%, 620px);
+        }
+
+        .message-panel {
+            min-height: auto;
+            padding: 28px 23px 32px;
+        }
+
+        .message p {
+            font-size: 18px;
+            line-height: 1.75;
+        }
+    }
+
+    @media (max-width: 480px) {
+
+        body {
+            padding: 12px 10px 25px;
+        }
+
+        .memory-layout {
+            gap: 20px;
+        }
+
+        .message-panel {
+            padding: 23px 18px 28px;
+        }
+
+        .message p {
+            font-size: 16px;
+            line-height: 1.72;
+        }
+    }
+</style>
+</head>
+
+
+<body>
+
+<div class="page">
+
+    <div class="memory-layout">
+
+        <!-- =========================
+             LEFT: DRAWING
+             ========================= -->
+
+        <div class="drawing-panel">
+
+            <div class="canvas-wrap">
+
+                <canvas id="drawingCanvas"></canvas>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             RIGHT: SHAYARI
+             ========================= -->
+
+        <div class="message-panel">
+
+            <div class="message">
+
+                <p id="shayari"></p>
+
+                <div class="controls">
+
+                    <button id="replayButton">
+                        ↻ Replay Memory
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   SETTINGS
+   ========================================================= */
+
+const DRAW_DURATION = 10000; // 10 seconds
+
+const SHAYARI_DELAY = 2000; // 2 seconds
+
+const IMAGE_PATH = "memory.jpg";
+
+
+/* =========================================================
+   SHAYARI
+   ========================================================= */
+
+const lines = [
+
+    "Parivaar ko apne dil ke kareeb, yun hi saath lekar chalna,",
+
+    "Chhoti-chhoti khushiyon ko sabke saath milkar baantte rehna.",
+
+    "Main yahan bilkul akeli nahi hoon,",
+
+    "Dada mere saath hain, ab unke saath hi meri duniya hai.",
+
+    "Woh yahan bhi mera waise hi khayal rakhte hain,",
+
+    "Jaise tum sabke beech rehkar hum dono ek-doosre ka rakhte the.",
+
+    "Tum jab bhi koi nayi manzil paana, mujhe yaad karke muskuraana,",
+
+    "Aur jab poora parivaar saath ho, mujhe bhi apne paas paana.",
+
+    "Tum sabki khushiyon mein hi meri khushi basi rahegi,",
+
+    "Aur tumhari har khoobsurat yaad mein, Baa hamesha tumhare saath rahegi. ❤️"
+
+];
+
+
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+
+const canvas =
+    document.getElementById("drawingCanvas");
+
+const ctx =
+    canvas.getContext("2d");
+
+const shayariElement =
+    document.getElementById("shayari");
+
+const replayButton =
+    document.getElementById("replayButton");
+
+const img =
+    new Image();
+
+img.src = IMAGE_PATH;
+
+
+/* =========================================================
+   VARIABLES
+   ========================================================= */
+
+let width = 0;
+let height = 0;
+
+let animationFrame = null;
+
+let animationStart = 0;
+
+let strokes = [];
+
+let maskCanvas = null;
+let maskCtx = null;
+
+/*
+   This is important.
+
+   It lets us cancel the previous 2-second
+   shayari timer when Replay is pressed.
+*/
+
+let shayariTimer = null;
+
+
+/* =========================================================
+   CANVAS SIZE
+   ========================================================= */
+
+function setupCanvas() {
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+    const dpr =
+        Math.min(
+            window.devicePixelRatio || 1,
+            2
+        );
+
+    width =
+        Math.floor(rect.width * dpr);
+
+    height =
+        Math.floor(rect.height * dpr);
+
+    canvas.width = width;
+    canvas.height = height;
+
+    ctx.setTransform(
+        1,
+        0,
+        0,
+        1,
+        0,
+        0
+    );
+
+
+    maskCanvas =
+        document.createElement("canvas");
+
+    maskCanvas.width = width;
+    maskCanvas.height = height;
+
+    maskCtx =
+        maskCanvas.getContext("2d");
+
+    maskCtx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+}
+
+
+/* =========================================================
+   IMAGE FITTING
+   ========================================================= */
+
+function drawImageCover(context) {
+
+    const iw =
+        img.naturalWidth;
+
+    const ih =
+        img.naturalHeight;
+
+    const scale =
+        Math.max(
+            width / iw,
+            height / ih
+        );
+
+    const drawWidth =
+        iw * scale;
+
+    const drawHeight =
+        ih * scale;
+
+    const x =
+        (width - drawWidth) / 2;
+
+    const y =
+        (height - drawHeight) / 2;
+
+    context.drawImage(
+        img,
+        x,
+        y,
+        drawWidth,
+        drawHeight
+    );
+}
+
+
+/* =========================================================
+   CREATE PENCIL STROKES
+   ========================================================= */
+
+function createStrokes() {
+
+    strokes = [];
+
+    const rows =
+        Math.ceil(height / 18);
+
+
+    /*
+       Main horizontal strokes.
+    */
+
+    for (
+        let i = 0;
+        i < rows;
+        i++
+    ) {
+
+        const baseY =
+            i * 18;
+
+        const points = [];
+
+        const segments =
+            Math.ceil(width / 35);
+
+
+        for (
+            let j = 0;
+            j <= segments;
+            j++
+        ) {
+
+            const x =
+                j * 35;
+
+            const wave =
+                Math.sin(
+                    j * 0.8 +
+                    i * 0.35
+                ) * 5;
+
+            const noise =
+                (Math.random() - 0.5) * 5;
+
+
+            points.push({
+
+                x: x,
+
+                y:
+                    baseY +
+                    wave +
+                    noise
+
+            });
+        }
+
+
+        strokes.push({
+
+            points: points,
+
+            width:
+                16 +
+                Math.random() * 9,
+
+            delay:
+                (i / rows) * 0.82 +
+                (Math.random() - 0.5) * 0.08
+
+        });
+    }
+
+
+    /*
+       Additional diagonal strokes
+       for a more natural hand-drawn feel.
+    */
+
+    const diagonalCount =
+        Math.floor(rows * 0.35);
+
+
+    for (
+        let i = 0;
+        i < diagonalCount;
+        i++
+    ) {
+
+        const startX =
+            Math.random() * width;
+
+        const startY =
+            Math.random() * height;
+
+        const length =
+            width *
+            (0.25 + Math.random() * 0.5);
+
+
+        strokes.push({
+
+            points: [
+
+                {
+                    x: startX,
+                    y: startY
+                },
+
+                {
+                    x:
+                        startX +
+                        length,
+
+                    y:
+                        startY +
+                        length * 0.08
+                }
+
+            ],
+
+            width:
+                10 +
+                Math.random() * 12,
+
+            delay:
+                0.25 +
+                Math.random() * 0.65
+
+        });
+    }
+
+
+    strokes.sort(
+        (a, b) =>
+            a.delay - b.delay
+    );
+}
+
+
+/* =========================================================
+   DRAW PARTIAL STROKE
+   ========================================================= */
+
+function drawStroke(
+    stroke,
+    progress
+) {
+
+    if (progress <= 0) {
+        return;
+    }
+
+
+    const points =
+        stroke.points;
+
+
+    if (points.length < 2) {
+        return;
+    }
+
+
+    const totalSegments =
+        points.length - 1;
+
+
+    const exactPosition =
+        progress *
+        totalSegments;
+
+
+    const completeSegments =
+        Math.floor(
+            exactPosition
+        );
+
+
+    const partial =
+        exactPosition -
+        completeSegments;
+
+
+    maskCtx.save();
+
+
+    maskCtx.lineCap =
+        "round";
+
+    maskCtx.lineJoin =
+        "round";
+
+
+    maskCtx.strokeStyle =
+        "rgba(255,255,255,1)";
+
+
+    maskCtx.lineWidth =
+        stroke.width;
+
+
+    maskCtx.beginPath();
+
+
+    maskCtx.moveTo(
+        points[0].x,
+        points[0].y
+    );
+
+
+    for (
+        let i = 1;
+        i <= completeSegments;
+        i++
+    ) {
+
+        maskCtx.lineTo(
+            points[i].x,
+            points[i].y
+        );
+    }
+
+
+    if (
+        completeSegments <
+        totalSegments
+    ) {
+
+        const a =
+            points[completeSegments];
+
+        const b =
+            points[
+                completeSegments + 1
+            ];
+
+
+        const px =
+            a.x +
+            (b.x - a.x) *
+            partial;
+
+
+        const py =
+            a.y +
+            (b.y - a.y) *
+            partial;
+
+
+        maskCtx.lineTo(
+            px,
+            py
+        );
+    }
+
+
+    maskCtx.stroke();
+
+    maskCtx.restore();
+}
+
+
+/* =========================================================
+   RENDER REVEAL
+   ========================================================= */
+
+function renderReveal(
+    overallProgress
+) {
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    ctx.fillStyle =
+        "#fffdf8";
+
+
+    ctx.fillRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    /*
+       Draw the accumulated pencil strokes.
+    */
+
+    for (
+        const stroke of strokes
+    ) {
+
+        const localProgress =
+            (
+                overallProgress -
+                stroke.delay
+            ) / 0.28;
+
+
+        if (
+            localProgress <= 0
+        ) {
+            continue;
+        }
+
+
+        drawStroke(
+            stroke,
+            Math.min(
+                localProgress,
+                1
+            )
+        );
+    }
+
+
+    /*
+       Draw the actual photograph.
+    */
+
+    ctx.save();
+
+    drawImageCover(ctx);
+
+
+    /*
+       Use the strokes as the reveal mask.
+    */
+
+    ctx.globalCompositeOperation =
+        "destination-in";
+
+
+    ctx.drawImage(
+        maskCanvas,
+        0,
+        0
+    );
+
+
+    ctx.restore();
+}
+
+
+/* =========================================================
+   DRAWING ANIMATION
+   ========================================================= */
+
+function animateDrawing(
+    timestamp
+) {
+
+    if (!animationStart) {
+
+        animationStart =
+            timestamp;
+    }
+
+
+    const elapsed =
+        timestamp -
+        animationStart;
+
+
+    const rawProgress =
+        Math.min(
+            elapsed /
+            DRAW_DURATION,
+            1
+        );
+
+
+    /*
+       Smooth ease-in-out.
+    */
+
+    const progress =
+        rawProgress < 0.5
+
+            ? 2 *
+              rawProgress *
+              rawProgress
+
+            : 1 -
+              Math.pow(
+                  -2 *
+                  rawProgress +
+                  2,
+                  2
+              ) / 2;
+
+
+    renderReveal(
+        progress
+    );
+
+
+    if (
+        rawProgress < 1
+    ) {
+
+        animationFrame =
+            requestAnimationFrame(
+                animateDrawing
+            );
+
+    } else {
+
+        /*
+           Make sure the final frame
+           is the complete photograph.
+        */
+
+        ctx.clearRect(
+            0,
+            0,
+            width,
+            height
+        );
+
+        drawImageCover(ctx);
+
+        animationFrame = null;
+    }
+}
+
+
+/* =========================================================
+   SHAYARI WORD-BY-WORD
+   ========================================================= */
+
+function typeShayari() {
+
+    shayariElement.innerHTML = "";
+
+
+    let lineIndex = 0;
+
+    let wordIndex = 0;
+
+    let currentLine = null;
+
+
+    function showNextWord() {
+
+        /*
+           Finished all lines.
+        */
+
+        if (
+            lineIndex >=
+            lines.length
+        ) {
+
+            const cursor =
+                document.querySelector(
+                    ".cursor"
+                );
+
+
+            if (cursor) {
+                cursor.remove();
+            }
+
+            return;
+        }
+
+
+        /*
+           Create a new line.
+        */
+
+        if (
+            wordIndex === 0
+        ) {
+
+            currentLine =
+                document.createElement(
+                    "span"
+                );
+
+
+            currentLine.className =
+                "shayari-line";
+
+
+            shayariElement.appendChild(
+                currentLine
+            );
+        }
+
+
+        const words =
+            lines[
+                lineIndex
+            ].split(" ");
+
+
+        /*
+           Add next word.
+        */
+
+        if (
+            wordIndex <
+            words.length
+        ) {
+
+            const word =
+                document.createElement(
+                    "span"
+                );
+
+
+            word.className =
+                "shayari-word";
+
+
+            word.textContent =
+                words[wordIndex];
+
+
+            currentLine.appendChild(
+                word
+            );
+
+
+            /*
+               Move cursor to the end.
+            */
+
+            const oldCursor =
+                document.querySelector(
+                    ".cursor"
+                );
+
+
+            if (oldCursor) {
+                oldCursor.remove();
+            }
+
+
+            const cursor =
+                document.createElement(
+                    "span"
+                );
+
+
+            cursor.className =
+                "cursor";
+
+
+            currentLine.appendChild(
+                cursor
+            );
+
+
+            wordIndex++;
+
+
+            setTimeout(
+                showNextWord,
+                125
+            );
+
+
+        } else {
+
+            /*
+               Move to next line.
+            */
+
+            wordIndex = 0;
+
+            lineIndex++;
+
+
+            setTimeout(
+                showNextWord,
+                260
+            );
+        }
+    }
+
+
+    showNextWord();
+}
+
+
+/* =========================================================
+   START MEMORY
+   ========================================================= */
+
+function startMemory() {
+
+    /*
+       Stop current drawing animation.
+    */
+
+    if (
+        animationFrame
+    ) {
+
+        cancelAnimationFrame(
+            animationFrame
+        );
+
+        animationFrame = null;
+    }
+
+
+    /*
+       IMPORTANT:
+       Cancel any previous shayari timer.
+    */
+
+    if (
+        shayariTimer
+    ) {
+
+        clearTimeout(
+            shayariTimer
+        );
+
+        shayariTimer = null;
+    }
+
+
+    /*
+       Clear the shayari immediately.
+    */
+
+    shayariElement.innerHTML = "";
+
+
+    /*
+       Reset drawing.
+    */
+
+    animationStart = 0;
+
+
+    if (maskCtx) {
+
+        maskCtx.clearRect(
+            0,
+            0,
+            width,
+            height
+        );
+    }
+
+
+    /*
+       Generate fresh organic strokes.
+    */
+
+    createStrokes();
+
+
+    /*
+       ========================================
+       0 SECONDS
+       IMAGE DRAWING STARTS
+       ========================================
+    */
+
+    animationFrame =
+        requestAnimationFrame(
+            animateDrawing
+        );
+
+
+    /*
+       ========================================
+       2 SECONDS
+       SHAYARI STARTS
+       ========================================
+    */
+
+    shayariTimer =
+        setTimeout(
+            function () {
+
+                shayariTimer = null;
+
+                typeShayari();
+
+            },
+            SHAYARI_DELAY
+        );
+}
+
+
+/* =========================================================
+   REPLAY
+   ========================================================= */
+
+replayButton.addEventListener(
+    "click",
+    function () {
+
+        startMemory();
+
+    }
+);
+
+
+/* =========================================================
+   INITIAL LOAD
+   ========================================================= */
+
+img.onload = function () {
+
+    setupCanvas();
+
+    createStrokes();
+
+    /*
+       Automatically start
+       when the image has loaded.
+    */
+
+    startMemory();
+};
+
+
+/* =========================================================
+   IMAGE ERROR
+   ========================================================= */
+
+img.onerror = function () {
+
+    console.error(
+        "Could not load memory.jpg"
+    );
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+    ctx.fillStyle =
+        "#5a4b40";
+
+    ctx.font =
+        "18px Georgia";
+
+    ctx.textAlign =
+        "center";
+
+    ctx.fillText(
+        "Please make sure memory.jpg",
+        width / 2,
+        height / 2 - 10
+    );
+
+    ctx.fillText(
+        "is in the same folder as index.html.",
+        width / 2,
+        height / 2 + 20
+    );
+};
+
+
+/* =========================================================
+   RESIZE
+   ========================================================= */
+
+window.addEventListener(
+    "resize",
+    function () {
+
+        if (!img.complete) {
+            return;
+        }
+
+
+        setupCanvas();
+
+        createStrokes();
+
+
+        /*
+           If animation is not running,
+           show the complete image.
+        */
+
+        if (!animationFrame) {
+
+            drawImageCover(ctx);
+        }
+    }
+);
+
+</script>
+
+</body>
+</html>
